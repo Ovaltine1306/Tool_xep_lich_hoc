@@ -1,7 +1,13 @@
-cmake_minium_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 
-project(Tool_xep_lich_hoc)
+project(toolXepLichHoc)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include_directories(include)
 
-include_
+file(GLOB SOURCES "/src*.cpp")
+
+add_executable(toolXepLichHoc ${SOURCES})
+

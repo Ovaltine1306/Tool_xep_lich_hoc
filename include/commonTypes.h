@@ -19,6 +19,7 @@ struct lopHoc{
     int tietKetThuc;
     std::vector<int> tuanHoc;
     std::string phongHoc;
+    int soTin;
 };
 
 struct phuongAn{
@@ -37,4 +38,4 @@ struct dieuKienLoc{
     // Khung giờ
     int tietDauTien = 1;
     int tietCuoiCung = 12;
-};
+}; 

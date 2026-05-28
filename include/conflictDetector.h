@@ -5,5 +5,5 @@
 #include<vector>
 #include<string>
 
-bool kiemTraTrungGio(lopHoc& lop, std::vector<lopHoc>& lichHienTai);
-bool kiemTraDieuKienLoc(lopHoc& lop, dieuKienLoc& dieuKien);
+bool kiemTraTrungGio(const lopHoc& lop, const std::vector<lopHoc>& lichHienTai);
+bool kiemTraDieuKienLoc(const lopHoc& lop, const dieuKienLoc& dieuKien);

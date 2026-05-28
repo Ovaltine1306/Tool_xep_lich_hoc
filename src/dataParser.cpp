@@ -66,6 +66,7 @@ unordered_map<string,vector<lopHoc>> docFileCSV(string duongDan) {
         l.maLop = trim(cell[2]);  //Mã lớp
         l.maHP  = trim(cell[4]);  //Mã HP
         l.tenMon = cell[5]; //Tên HP
+        l.soTin = cell[7].empty() ? 0 : stoi(cell[7]);  //Số tín chỉ
         l.thu = cell[10].empty() ? 0 : stoi(cell[10]);  //Thứ 
         l.tietBatDau = cell[12].empty() ? 0 : stoi(cell[12]);   //Tiết BĐ 
         l.tietKetThuc = cell[13].empty() ? 0 : stoi(cell[13]);  //Tiết KT 

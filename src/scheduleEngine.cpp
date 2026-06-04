@@ -8,6 +8,7 @@ using namespace std;
 int cnt = 0;
 
 void xepLich(int index, vector<vector<lopHoc>>& dsCacNhomTheoMaMon, vector<lopHoc>& lichHienTai, vector<phuongAn>& result, dieuKienLoc& dieuKien){
+    if(result.size() > 1000) return;
     if(index == dsCacNhomTheoMaMon.size()) {
         phuongAn paHienTai;
         paHienTai.danhSachLopHoc = lichHienTai;
@@ -30,9 +31,12 @@ void xepLich(int index, vector<vector<lopHoc>>& dsCacNhomTheoMaMon, vector<lopHo
 }
 
 vector<phuongAn> taoTKB(vector<string>& dsMaMon, dieuKienLoc& dieuKien) {
+    cnt = 0;
     vector<vector<lopHoc>> dsCacNhomTheoMaMon;
     for (int i = 0; i < dsMaMon.size(); i++) {
-        dsCacNhomTheoMaMon.push_back(layDanhSachLopTheoMon(dsMaMon[i]));
+        vector<lopHoc> dsLopLayDuoc = layDanhSachLopTheoMon(dsMaMon[i]);
+        cout << "[DEBUG CSV] Mon " << dsMaMon[i] << " boc tu file CSV len duoc: " << dsLopLayDuoc.size() << " lop thuc te." << endl;
+        dsCacNhomTheoMaMon.push_back(dsLopLayDuoc);
     }
     vector<lopHoc> lichHienTai;
     vector<phuongAn> result;

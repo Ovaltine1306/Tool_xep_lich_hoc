@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>HUST Schedule Engine</title>
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-sidebar: #161b22;
+      --bg-card: #21262d;
+      --border-color: #30363d;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --primary: #58a6ff;
+      --primary-hover: #1f6feb;
+      --accent-green: #238636;
+      --accent-red: #da3633;
+      --accent-purple: #bc8cff;
+      --accent-orange: #f78166;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR CONTROL */
+    aside { width: 380px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+    h2 { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 8px; color: #fff; }
+    .subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: -15px; font-family: monospace; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    label { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+    input[type="text"] { background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #fff; font-size: 0.9rem; transition: 0.2s; }
+    input[type="text"]:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+
+    /* ADVANCED FILTER: DAY OFF MATRIX */
+    .filter-section { border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; background: rgba(0,0,0,0.1); }
+    .filter-title { font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; color: var(--primary); }
+    
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; }
+    .matrix-table th { color: var(--text-muted); font-weight: 500; padding-bottom: 6px; }
+    .matrix-table td { padding: 4px 2px; }
+    .matrix-btn { display: block; width: 100%; padding: 6px 0; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-muted); cursor: pointer; user-select: none; transition: 0.1s; font-weight: 600; }
+    .matrix-btn.active { background: var(--accent-red); color: #fff; border-color: #f85149; }
+
+    /* TIME RANGE PICKER */
+    .time-range-group { display: flex; align-items: center; gap: 10px; }
+    select { flex: 1; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: #fff; font-size: 0.85rem; }
+
+    /* BUTTONS */
+    .btn-submit { background-color: var(--accent-green); color: #fff; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; padding: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-submit:hover { background-color: #2ea44f; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* MAIN VIEW */
+    main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    header { padding: 15px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .status-badge { font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-color); }
+    
+    .content-area { flex: 1; padding: 25px; overflow-y: auto; }
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+
+    /* COLORFUL CARDS */
+    .card { background-color: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; transition: 0.2s; display: flex; flex-direction: column; }
+    .card:hover { border-color: #8b949e; transform: translateY(-2px); }
+    .card-head { padding: 12px 16px; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .schedule-id { font-weight: 600; color: #fff; font-size: 0.95rem; }
+    .credits { font-size: 0.8rem; background: rgba(88,166,255,0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    
+    .class-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .class-item { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 6px; border-left: 4px solid var(--primary); background: var(--bg-main); }
+    
+    /* Dynamic Color classes */
+    .c-blue { border-left-color: var(--primary); }
+    .c-green { border-left-color: var(--accent-green); }
+    .c-purple { border-left-color: var(--accent-purple); }
+    .c-orange { border-left-color: var(--accent-orange); }
+
+    .class-meta { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #fff; }
+    .class-details { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 10px; }
+
+    /* UTILITIES */
+    .error-box { padding: 12px; border-radius: 6px; background: rgba(218,54,51,0.1); border: 1px solid var(--accent-red); color: #ff7b72; font-size: 0.85rem; display: none; }
+    .empty-state { text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 40px; border: 2px dashed var(--border-color); border-radius: 8px; }
+    
+    /* LOADING SPINNER */
+    .spinner { display: none; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <aside>
+    <div>
+      <h2>🔥 HUST Scheduler v2</h2>
+      <div class="subtitle">webview + c++ engine</div>
+    </div>
+
+    <div class="form-group">
+      <label for="subjectCodes">Mã học phần mong muốn</label>
+      <input type="text" id="subjectCodes" value="EM1170, IT3140, MI1141" placeholder="Ví dụ: IT3100, MI1111">
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">🛠️ Chọn buổi ép buộc NGHỈ</div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th></th><th>Th2</th><th>Th3</th><th>Th4</th><th>Th5</th><th>Th6</th><th>Th7</th><th>CN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted); font-weight:bold;">Sáng</td>
+            <td><div class="matrix-btn" data-day="2" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="3" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="4" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="5" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="6" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="7" data-session="morning">S</div></td>
+            <td><div class="matrix-btn" data-day="8" data-session="morning">S</div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted); font-weight:bold;">Chiều</td>
+            <td><div class="matrix-btn" data-day="2" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="3" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="4" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="5" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="6" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="7" data-session="afternoon">C</div></td>
+            <td><div class="matrix-btn" data-day="8" data-session="afternoon">C</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">⏰ Khoảng Tiết Học Cấu Hình</div>
+      <div class="time-range-group">
+        <div class="form-group" style="flex:1;">
+          <label>Từ Tiết</label>
+          <select id="startPeriod">
+            <option value="1">Tiết 1 (06:45)</option>
+            <option value="3">Tiết 3 (08:25)</option>
+            <option value="6">Tiết 6 (12:30)</option>
+            <option value="8">Tiết 8 (14:10)</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Đến Tiết</label>
+          <select id="endPeriod">
+            <option value="6">Tiết 6 (11:45)</option>
+            <option value="10">Tiết 10 (15:55)</option>
+            <option value="12" selected>Tiết 12 (17:45)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <button id="generateBtn" class="btn-submit">Xếp Thời Khóa Biểu</button>
+  </aside>
+
+  <main>
+    <header>
+      <h3 style="color:#fff;">Các Phương Án Tuyển Chọn</h3>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div id="spinner" class="spinner"></div>
+        <div id="statusText" class="status-badge">Idle</div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <div id="resultGrid" class="grid-layout">
+        <div class="empty-state">Vui lòng nhập mã học phần và bấm nút Xếp lịch!</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const generateBtn = document.getElementById("generateBtn");
+      const subjectInput = document.getElementById("subjectCodes");
+      const startPeriodEl = document.getElementById("startPeriod");
+      const endPeriodEl = document.getElementById("endPeriod");
+      const spinner = document.getElementById("spinner");
+      const resultGrid = document.getElementById("resultGrid");
+      const statusText = document.getElementById("statusText");
+      const errorBox = document.getElementById("errorBox");
+
+      // Xử lý sự kiện click ma trận chọn buổi nghỉ
+      const matrixButtons = document.querySelectorAll(".matrix-btn");
+      matrixButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          btn.classList.toggle("active");
+        });
+      });
+
+      function getSelectedDayOffs() {
+        const disabledSessions = [];
+        document.querySelectorAll(".matrix-btn.active").forEach(btn => {
+          disabledSessions.push({
+            dayOfWeek: parseInt(btn.getAttribute("data-day")),
+            session: btn.getAttribute("data-session")
+          });
+        });
+        return disabledSessions;
+      }
+
+      function setLoading(isLoading) {
+        spinner.style.display = isLoading ? "block" : "none";
+        generateBtn.disabled = isLoading;
+        statusText.textContent = isLoading ? "Xử lý..." : "Sẵn sàng";
+      }
+
+      // Hàm gán màu ngẫu nhiên theo mã môn
+      const colorPool = ['c-blue', 'c-green', 'c-purple', 'c-orange'];
+      const subjectColorMap = {};
+      function getSubjectColor(code) {
+        if (!subjectColorMap[code]) {
+          subjectColorMap[code] = colorPool[Object.keys(subjectColorMap).length % colorPool.length];
+        }
+        return subjectColorMap[code];
+      }
+
+      function renderSchedules(payload) {
+        if (!payload || !Array.isArray(payload.schedules) || payload.schedules.length === 0) {
+          resultGrid.innerHTML = '<div class="empty-state">❌ Không tìm thấy phương án TKB nào phù hợp với bộ lọc!</div>';
+          statusText.textContent = "Done (0)";
+          return;
+        }
+
+        const cards = payload.schedules.map((schedule) => {
+          const classes = Array.isArray(schedule.classes) ? schedule.classes : [];
+          const classRows = classes.map((c) => {
+            const colorClass = getSubjectColor(c.subjectCode);
+            return (
+              '<div class="class-item ' + colorClass + '">' +
+                '<div class="class-meta">' +
+                  '<span>📘 ' + (c.subjectCode || "N/A") + '</span>' +
+                  '<span style="color:var(--primary)">Thứ ' + (c.dayOfWeek === 8 ? "CN" : c.dayOfWeek) + '</span>' +
+                '</div>' +
+                '<div class="class-details">' +
+                  '<span>⏱️ Tiết: ' + (c.period || "?") + '</span>' +
+                  '<span>📍 Phòng: ' + (c.room || "TBD") + '</span>' +
+                '</div>' +
+              '</div>'
+            );
+          }).join("");
+
+          return (
+            '<article class="card">' +
+              '<div class="card-head">' +
+                '<div class="schedule-id">📌 Phương án #' + (schedule.id || "?") + "</div>" +
+                '<div class="credits">Tín chỉ: ' + (schedule.totalCredits ?? 0) + "</div>" +
+              "</div>" +
+              '<div class="class-list">' + (classRows || '<div class="class-item">Trống lịch</div>') + "</div>" +
+            "</article>"
+          );
+        }).join("");
+
+        resultGrid.innerHTML = cards;
+        statusText.textContent = "Kết quả (" + payload.schedules.length + ")";
+      }
+
+      async function onGenerateClick() {
+        errorBox.style.display = "none";
+        setLoading(true);
+
+        try {
+          const subjectCodes = subjectInput.value.trim();
+          
+          const filters = {
+            disabledSessions: getSelectedDayOffs(),
+            startPeriod: parseInt(startPeriodEl.value),
+            endPeriod: parseInt(endPeriodEl.value)
+          };
+
+          if (typeof window.taoTKB !== "function") {
+            throw new Error("Cầu nối window.taoTKB chưa sẵn sàng.");
+          }
+
+          // CHỐT HẠ FIX LỖI: Truyền trực tiếp Object filters sạch, không dùng JSON.stringify nữa!
+          const raw = await window.taoTKB(subjectCodes, filters);
+          
+          const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+          renderSchedules(parsed);
+        } catch (err) {
+          resultGrid.innerHTML = '<div class="empty-state">Không thể tạo thời khóa biểu.</div>';
+          errorBox.style.display = "block";
+          errorBox.textContent = err.message || "Lỗi không xác định.";
+          statusText.textContent = "Thất bại";
+          console.error("Lỗi Generator:", err); 
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      generateBtn.addEventListener("click", onGenerateClick);
+    })();
+  </script>
+</body>
+</html>

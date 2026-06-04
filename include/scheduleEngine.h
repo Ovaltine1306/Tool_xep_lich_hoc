@@ -4,6 +4,6 @@
 #include<string>
 #include"commonTypes.h"
 
-void xepLich();
+void xepLich(int index, std::vector<std::vector<lopHoc>>& dsCacNhomTheoMaMon, std::vector<lopHoc>& lichHienTai, std::vector<phuongAn>& result, dieuKienLoc& dieuKien);
 
-std::vector<phuongAn> taoTKB(std::vector<std::string>& dsMaMon);
+std::vector<phuongAn> taoTKB(std::vector<std::string>& dsMaMon, dieuKienLoc& dieuKien);

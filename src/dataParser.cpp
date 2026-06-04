@@ -70,6 +70,10 @@ unordered_map<string,vector<lopHoc>> docFileCSV(string duongDan) {
         l.thu = cell[10].empty() ? 0 : stoi(cell[10]);  //Thứ 
         l.tietBatDau = cell[12].empty() ? 0 : stoi(cell[12]);   //Tiết BĐ 
         l.tietKetThuc = cell[13].empty() ? 0 : stoi(cell[13]);  //Tiết KT 
+        if (trim(cell[14]) == "Chiều") {
+            l.tietBatDau += 6;
+            l.tietKetThuc += 6;
+        }
         if (l.thu == 0 || l.tietBatDau == 0 || l.tietKetThuc == 0) continue; //Bỏ các lớp đ có lịch học
         l.tuanHoc = phanTichTuanHoc(cell[15]);  //Tuần học 
         l.phongHoc = cell[16];      //Tên phòng học

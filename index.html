@@ -2,155 +2,177 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>HUST Schedule Engine</title>
+  <title>HUST Schedule Engine - Pixel Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #0d1117;
-      --bg-sidebar: #161b22;
-      --bg-card: #21262d;
-      --border-color: #30363d;
-      --text-main: #c9d1d9;
-      --text-muted: #8b949e;
-      --primary: #58a6ff;
-      --primary-hover: #1f6feb;
-      --accent-green: #238636;
-      --accent-red: #da3633;
-      --accent-purple: #bc8cff;
-      --accent-orange: #f78166;
+      --bg-main: #000000;
+      --bg-sidebar: #111111;
+      --bg-card: #222222;
+      --pixel-border: 4px solid #ffffff;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      
+      /* Retro Neon Palette */
+      --p-blue: #00ffff;
+      --p-green: #39ff14;
+      --p-purple: #cc00ff;
+      --p-orange: #ff9900;
+      --p-red: #ff0055;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; padding: 0; 
+      font-family: 'Press Start 2P', 'Courier New', monospace; 
+      text-transform: uppercase;
+    }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 10px; }
 
     /* SIDEBAR CONTROL */
-    aside { width: 380px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
-    h2 { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 8px; color: #fff; }
-    .subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: -15px; font-family: monospace; }
+    aside { width: 400px; background-color: var(--bg-sidebar); border-right: var(--pixel-border); padding: 20px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+    h2 { font-size: 14px; color: var(--p-green); text-shadow: 3px 3px 0px #000; margin-bottom: 4px; }
+    .subtitle { font-size: 8px; color: var(--p-blue); margin-bottom: 10px; }
     
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    label { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
-    input[type="text"] { background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: #fff; font-size: 0.9rem; transition: 0.2s; }
-    input[type="text"]:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+    .form-group { display: flex; flex-direction: column; gap: 10px; }
+    label { font-size: 8px; color: var(--text-main); }
+    input[type="text"] { background-color: #000; border: var(--pixel-border); padding: 12px; color: var(--p-blue); font-size: 10px; outline: none; }
+    input[type="text"]:focus { border-color: var(--p-green); }
 
-    /* ADVANCED FILTER: DAY OFF MATRIX */
-    .filter-section { border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; background: rgba(0,0,0,0.1); }
-    .filter-title { font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; color: var(--primary); }
+    /* MATRIX TABLE */
+    .filter-section { border: var(--pixel-border); padding: 12px; background: #000; box-shadow: 4px 4px 0px #333; }
+    .filter-title { font-size: 8px; margin-bottom: 12px; color: var(--p-orange); }
     
-    .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; }
-    .matrix-table th { color: var(--text-muted); font-weight: 500; padding-bottom: 6px; }
+    .matrix-table { width: 100%; border-collapse: collapse; font-size: 8px; }
+    .matrix-table th { color: var(--text-muted); padding-bottom: 8px; font-weight: normal; }
     .matrix-table td { padding: 4px 2px; }
-    .matrix-btn { display: block; width: 100%; padding: 6px 0; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-muted); cursor: pointer; user-select: none; transition: 0.1s; font-weight: 600; }
-    .matrix-btn.active { background: var(--accent-red); color: #fff; border-color: #f85149; }
+    .matrix-btn { display: block; width: 100%; padding: 8px 0; background: #222; border: 2px solid #555; color: var(--text-muted); cursor: pointer; user-select: none; text-align: center; }
+    .matrix-btn.active { background: var(--p-red); color: #fff; border-color: #ff0000; box-shadow: inset -2px -2px 0px #800; }
 
-    /* TIME RANGE PICKER */
-    .time-range-group { display: flex; align-items: center; gap: 10px; }
-    select { flex: 1; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: #fff; font-size: 0.85rem; }
+    /* SELECT TIME */
+    .time-range-group { display: flex; gap: 10px; }
+    select { flex: 1; background-color: #000; border: var(--pixel-border); padding: 8px; color: var(--p-blue); font-size: 8px; outline: none; cursor: pointer; }
 
-    /* BUTTONS */
-    .btn-submit { background-color: var(--accent-green); color: #fff; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; padding: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-submit:hover { background-color: #2ea44f; }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* PIXEL BUTTON */
+    .btn-submit { 
+      background-color: var(--p-green); color: #000; 
+      border: var(--pixel-border); padding: 14px; 
+      font-size: 11px; font-weight: bold; cursor: pointer; 
+      box-shadow: 4px 4px 0px #005500; transition: 0.1s;
+      margin-top: 10px;
+    }
+    .btn-submit:hover { background-color: #2ecc71; transform: translate(2px, 2px); box-shadow: 2px 2px 0px #005500; }
+    .btn-submit:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #005500; }
+    .btn-submit:disabled { background-color: #555; border-color: #888; color: #333; cursor: not-allowed; box-shadow: none; transform: none; }
 
     /* MAIN VIEW */
-    main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    header { padding: 15px 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-    .status-badge { font-size: 0.75rem; font-weight: 600; padding: 4px 8px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-color); }
+    main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #050505; }
+    header { padding: 20px; border-bottom: var(--pixel-border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
+    h3 { font-size: 14px; color: #fff; }
+    .status-badge { font-size: 8px; padding: 6px 10px; background: #000; border: 2px solid var(--text-muted); }
     
-    .content-area { flex: 1; padding: 25px; overflow-y: auto; }
-    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+    .content-area { flex: 1; padding: 20px; overflow-y: auto; }
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px; }
 
-    /* COLORFUL CARDS */
-    .card { background-color: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; transition: 0.2s; display: flex; flex-direction: column; }
-    .card:hover { border-color: #8b949e; transform: translateY(-2px); }
-    .card-head { padding: 12px 16px; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-    .schedule-id { font-weight: 600; color: #fff; font-size: 0.95rem; }
-    .credits { font-size: 0.8rem; background: rgba(88,166,255,0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    /* ARCADE CARDS */
+    .card { 
+      background-color: var(--bg-sidebar); 
+      border: var(--pixel-border); 
+      padding: 14px;
+      box-shadow: 6px 6px 0px #1c1f24; 
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .card:hover { border-color: var(--p-blue); box-shadow: 6px 6px 0px rgba(0,255,255,0.2); }
+    .card-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #444; padding-bottom: 8px; }
+    .schedule-id { font-size: 10px; color: #fff; }
+    .credits { font-size: 8px; color: var(--p-green); }
     
-    .class-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .class-item { display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 6px; border-left: 4px solid var(--primary); background: var(--bg-main); }
+    .class-list { display: flex; flex-direction: column; gap: 12px; }
+    .class-item { padding: 10px; border: 2px solid #444; background: #000; display: flex; flex-direction: column; gap: 8px; }
     
-    /* Dynamic Color classes */
-    .c-blue { border-left-color: var(--primary); }
-    .c-green { border-left-color: var(--accent-green); }
-    .c-purple { border-left-color: var(--accent-purple); }
-    .c-orange { border-left-color: var(--accent-orange); }
+    /* Pixel Dynamic Left Border Color */
+    .c-blue { border-left: 6px solid var(--p-blue); }
+    .c-green { border-left: 6px solid var(--p-green); }
+    .c-purple { border-left: 6px solid var(--p-purple); }
+    .c-orange { border-left: 6px solid var(--p-orange); }
 
-    .class-meta { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #fff; }
-    .class-details { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 10px; }
+    .class-meta { display: flex; flex-direction: column; gap: 6px; font-size: 9px; color: #fff; }
+    .class-code-badge { font-size: 8px; color: var(--p-orange); background: #111; padding: 4px; border: 1px dashed var(--p-orange); width: fit-content; margin-top: 2px; }
+    .class-details { font-size: 8px; color: var(--text-muted); display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 6px; }
 
     /* UTILITIES */
-    .error-box { padding: 12px; border-radius: 6px; background: rgba(218,54,51,0.1); border: 1px solid var(--accent-red); color: #ff7b72; font-size: 0.85rem; display: none; }
-    .empty-state { text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 40px; border: 2px dashed var(--border-color); border-radius: 8px; }
+    .error-box { padding: 12px; border: 3px solid var(--p-red); background: #200; color: var(--p-red); font-size: 8px; display: none; line-height: 1.4; }
+    .empty-state { text-align: center; color: var(--text-muted); font-size: 9px; padding: 40px; border: 4px dashed #333; line-height: 1.8; }
     
-    /* LOADING SPINNER */
-    .spinner { display: none; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* RETRO LOADING SPINNER */
+    .spinner { display: none; font-size: 8px; color: var(--p-green); animation: blink 0.5s infinite alternate; }
+    @keyframes blink { from { opacity: 0.2; } to { opacity: 1; } }
   </style>
 </head>
 <body>
 
   <aside>
     <div>
-      <h2>🔥 HUST Scheduler v2</h2>
-      <div class="subtitle">webview + c++ engine</div>
+      <h2>HUST_OS v2.0</h2>
+      <div class="subtitle">> INSERT COIN TO START</div>
     </div>
 
     <div class="form-group">
-      <label for="subjectCodes">Mã học phần mong muốn</label>
-      <input type="text" id="subjectCodes" value="EM1170, IT3140, MI1141" placeholder="Ví dụ: IT3100, MI1111">
+      <label>INPUT CODES [MA HOC PHAN]</label>
+      <input type="text" id="subjectCodes" value="EM1170, IT3140, MI1141">
     </div>
 
     <div class="filter-section">
-      <div class="filter-title">🛠️ Chọn buổi ép buộc NGHỈ</div>
+      <div class="filter-title">[SELECT DAYS OFF]</div>
       <table class="matrix-table">
         <thead>
           <tr>
-            <th></th><th>Th2</th><th>Th3</th><th>Th4</th><th>Th5</th><th>Th6</th><th>Th7</th><th>CN</th>
+            <th></th><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>T7</th><th>CN</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="color:var(--text-muted); font-weight:bold;">Sáng</td>
-            <td><div class="matrix-btn" data-day="2" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="3" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="4" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="5" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="6" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="7" data-session="morning">S</div></td>
-            <td><div class="matrix-btn" data-day="8" data-session="morning">S</div></td>
+            <td style="color:var(--p-blue);">AM</td>
+            <td><div class="matrix-btn" data-day="2" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="3" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="4" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="5" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="6" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="7" data-session="morning">M</div></td>
+            <td><div class="matrix-btn" data-day="8" data-session="morning">M</div></td>
           </tr>
           <tr>
-            <td style="color:var(--text-muted); font-weight:bold;">Chiều</td>
-            <td><div class="matrix-btn" data-day="2" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="3" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="4" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="5" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="6" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="7" data-session="afternoon">C</div></td>
-            <td><div class="matrix-btn" data-day="8" data-session="afternoon">C</div></td>
+            <td style="color:var(--p-purple);">PM</td>
+            <td><div class="matrix-btn" data-day="2" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="3" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="4" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="5" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="6" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="7" data-session="afternoon">A</div></td>
+            <td><div class="matrix-btn" data-day="8" data-session="afternoon">A</div></td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="filter-section">
-      <div class="filter-title">⏰ Khoảng Tiết Học Cấu Hình</div>
+      <div class="filter-title">[PERIOD LIMITS]</div>
       <div class="time-range-group">
         <div class="form-group" style="flex:1;">
-          <label>Từ Tiết</label>
+          <label>FROM</label>
           <select id="startPeriod">
-            <option value="1">Tiết 1 (06:45)</option>
-            <option value="3">Tiết 3 (08:25)</option>
-            <option value="6">Tiết 6 (12:30)</option>
-            <option value="8">Tiết 8 (14:10)</option>
+            <option value="1">P1 (06:45)</option>
+            <option value="3">P3 (08:25)</option>
+            <option value="6">P6 (12:30)</option>
+            <option value="8">P8 (14:10)</option>
           </select>
         </div>
         <div class="form-group" style="flex:1;">
-          <label>Đến Tiết</label>
+          <label>TO</label>
           <select id="endPeriod">
-            <option value="6">Tiết 6 (11:45)</option>
-            <option value="10">Tiết 10 (15:55)</option>
-            <option value="12" selected>Tiết 12 (17:45)</option>
+            <option value="6">P6 (11:45)</option>
+            <option value="10">P10 (15:55)</option>
+            <option value="12" selected>P12 (17:45)</option>
           </select>
         </div>
       </div>
@@ -158,21 +180,21 @@
 
     <div id="errorBox" class="error-box"></div>
 
-    <button id="generateBtn" class="btn-submit">Xếp Thời Khóa Biểu</button>
+    <button id="generateBtn" class="btn-submit">RUN ENGINE</button>
   </aside>
 
   <main>
     <header>
-      <h3 style="color:#fff;">Các Phương Án Tuyển Chọn</h3>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div id="spinner" class="spinner"></div>
-        <div id="statusText" class="status-badge">Idle</div>
+      <h3>[AVAILABLE STAGES]</h3>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div id="spinner" class="spinner">LOADING...</div>
+        <div id="statusText" class="status-badge">READY</div>
       </div>
     </header>
 
     <div class="content-area">
       <div id="resultGrid" class="grid-layout">
-        <div class="empty-state">Vui lòng nhập mã học phần và bấm nút Xếp lịch!</div>
+        <div class="empty-state">> SYSTEM IDLE.<br>> ENTER CODES AND PRESS RUN ENGINE TO START THE BACKTRACKING SIMULATION.</div>
       </div>
     </div>
   </main>
@@ -188,7 +210,6 @@
       const statusText = document.getElementById("statusText");
       const errorBox = document.getElementById("errorBox");
 
-      // Xử lý sự kiện click ma trận chọn buổi nghỉ
       const matrixButtons = document.querySelectorAll(".matrix-btn");
       matrixButtons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -210,10 +231,9 @@
       function setLoading(isLoading) {
         spinner.style.display = isLoading ? "block" : "none";
         generateBtn.disabled = isLoading;
-        statusText.textContent = isLoading ? "Xử lý..." : "Sẵn sàng";
+        statusText.textContent = isLoading ? "LOADING" : "READY";
       }
 
-      // Hàm gán màu ngẫu nhiên theo mã môn
       const colorPool = ['c-blue', 'c-green', 'c-purple', 'c-orange'];
       const subjectColorMap = {};
       function getSubjectColor(code) {
@@ -225,8 +245,8 @@
 
       function renderSchedules(payload) {
         if (!payload || !Array.isArray(payload.schedules) || payload.schedules.length === 0) {
-          resultGrid.innerHTML = '<div class="empty-state">❌ Không tìm thấy phương án TKB nào phù hợp với bộ lọc!</div>';
-          statusText.textContent = "Done (0)";
+          resultGrid.innerHTML = '<div class="empty-state">❌ FATAL ERROR: NO VALID PLANS FOUND WITH THE CURRENT FILTER SETTINGS.</div>';
+          statusText.textContent = "DONE (0)";
           return;
         }
 
@@ -237,12 +257,14 @@
             return (
               '<div class="class-item ' + colorClass + '">' +
                 '<div class="class-meta">' +
-                  '<span>📘 ' + (c.subjectCode || "N/A") + '</span>' +
-                  '<span style="color:var(--primary)">Thứ ' + (c.dayOfWeek === 8 ? "CN" : c.dayOfWeek) + '</span>' +
+                  '<span>HP: ' + (c.subjectCode || "N/A") + '</span>' +
+                  // 🔥 HIỂN THỊ MÃ LỚP HỌC ĐƯỢC TRUYỀN TỪ C++ SANG:
+                  '<span class="class-code-badge">MÃ LỚP: ' + (c.classCode || "N/A") + '</span>' +
                 '</div>' +
                 '<div class="class-details">' +
-                  '<span>⏱️ Tiết: ' + (c.period || "?") + '</span>' +
-                  '<span>📍 Phòng: ' + (c.room || "TBD") + '</span>' +
+                  '<span>DAY ' + (c.dayOfWeek === 8 ? "CN" : c.dayOfWeek) + '</span>' +
+                  '<span>P: ' + (c.period || "?") + '</span>' +
+                  '<span>RM: ' + (c.room || "TBD") + '</span>' +
                 '</div>' +
               '</div>'
             );
@@ -251,16 +273,16 @@
           return (
             '<article class="card">' +
               '<div class="card-head">' +
-                '<div class="schedule-id">📌 Phương án #' + (schedule.id || "?") + "</div>" +
-                '<div class="credits">Tín chỉ: ' + (schedule.totalCredits ?? 0) + "</div>" +
+                '<div class="schedule-id">PLAN #' + (schedule.id || "?") + "</div>" +
+                '<div class="credits">CR: ' + (schedule.totalCredits ?? 0) + "</div>" +
               "</div>" +
-              '<div class="class-list">' + (classRows || '<div class="class-item">Trống lịch</div>') + "</div>" +
+              '<div class="class-list">' + (classRows || '<div class="class-item">EMPTY STAGE</div>') + "</div>" +
             "</article>"
           );
         }).join("");
 
         resultGrid.innerHTML = cards;
-        statusText.textContent = "Kết quả (" + payload.schedules.length + ")";
+        statusText.textContent = "LOADED (" + payload.schedules.length + ")";
       }
 
       async function onGenerateClick() {
@@ -269,7 +291,6 @@
 
         try {
           const subjectCodes = subjectInput.value.trim();
-          
           const filters = {
             disabledSessions: getSelectedDayOffs(),
             startPeriod: parseInt(startPeriodEl.value),
@@ -277,20 +298,18 @@
           };
 
           if (typeof window.taoTKB !== "function") {
-            throw new Error("Cầu nối window.taoTKB chưa sẵn sàng.");
+            throw new Error("BRIDGE INTERFACE DISCONNECTED.");
           }
 
-          // CHỐT HẠ FIX LỖI: Truyền trực tiếp Object filters sạch, không dùng JSON.stringify nữa!
           const raw = await window.taoTKB(subjectCodes, filters);
-          
           const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
           renderSchedules(parsed);
         } catch (err) {
-          resultGrid.innerHTML = '<div class="empty-state">Không thể tạo thời khóa biểu.</div>';
+          resultGrid.innerHTML = '<div class="empty-state">EXECUTION FAILED.</div>';
           errorBox.style.display = "block";
-          errorBox.textContent = err.message || "Lỗi không xác định.";
-          statusText.textContent = "Thất bại";
-          console.error("Lỗi Generator:", err); 
+          errorBox.textContent = "CRITICAL: " + (err.message || "UNKNOWN ENGINE ERROR.");
+          statusText.textContent = "FAILURE";
+          console.error(err); 
         } finally {
           setLoading(false);
         }

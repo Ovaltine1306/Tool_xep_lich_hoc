@@ -90,6 +90,14 @@ std::vector<std::string> bopTachMaMon(const std::string& cleanCodes) {
 }  // namespace
 
 int main() {
+  std::cout << "=======================================================================" << std::endl;
+  std::cout << "    [!] HUST SCHEDULE ENGINE v2.5 - SOFT RETRO CALENDAR EDITION        " << std::endl;
+  std::cout << "    [+] CORE ALGORITHM : BACKTRACKING (QUAY LUI DEG QUY)               " << std::endl;
+  std::cout << "    [+] DEVELOPED BY   : UONG VAN THINH & NGUYEN MINH TRI (IT1 - HUST) " << std::endl;
+  std::cout << "    [+] VERSION        : 2026.06.07                                    " << std::endl;
+  std::cout << "    [-] WARNING        : ALL RIGHTS RESERVED. DO NOT RE-BRAND!         " << std::endl;
+  std::cout << "=======================================================================" << std::endl;
+  std::cout << "[SYSTEM] Khoi chay he thong loc lich..." << std::endl;
   napData("Data.csv");
   try {
     webview::webview w(true, nullptr);
@@ -106,7 +114,7 @@ int main() {
         std::vector<std::string> dsMaMon = bopTachMaMon(subjectCodesRaw);
 
         // 🔥 LOG 2: Xem C++ bóc tách từ chuỗi ra được bao nhiêu môn học
-        std::cout << "[MÃ MÔN NHẬN ĐƯỢC]: ";
+        std::cout << "[MA MON NHAN DUOC]: ";
         for(const auto& m : dsMaMon) std::cout << "'" << m << "' ";
         std::cout << "\n-----------------------------------------------------------" << std::endl;
 
@@ -124,7 +132,7 @@ int main() {
         std::vector<phuongAn> cacPhuongAn = taoTKB(dsMaMon, dk);
 
         // 🔥 LOG 3: Xem thuật toán đệ quy tìm ra được bao nhiêu phương án cuối cùng
-        std::cout << "[KẾT QUẢ]: Tim thay THỰC TẾ " << cacPhuongAn.size() << " phuong an TKB." << std::endl;
+        std::cout << "[KET QUA]: Tim thay thuc te " << cacPhuongAn.size() << " phuong an TKB." << std::endl;
         std::cout << "============================================================\n" << std::endl;
 
         // 4. Đóng gói đống vector của bồ thành chuỗi JSON sạch để ném về cho Web render
@@ -138,6 +146,7 @@ int main() {
             for (size_t j = 0; j < pa.danhSachLopHoc.size(); ++j) {
                 const auto& c = pa.danhSachLopHoc[j];
                 responseJson += "{\"subjectCode\":\"" + c.maHP + "\","; 
+                responseJson += "\"classCode\":\"" + c.maLop + "\",";
                 responseJson += "\"dayOfWeek\":" + std::to_string(c.thu) + ",";    
                 responseJson += "\"period\":\"" + std::to_string(c.tietBatDau) + "-" + std::to_string(c.tietKetThuc) + "\","; 
                 responseJson += "\"room\":\"" + c.phongHoc + "\"}";    
@@ -171,7 +180,7 @@ int main() {
     if (fileLoaded) {
         w.set_html(htmlContent);
     } else {
-        w.set_html("<html><body><h2>🚨 Không tìm thấy index.html!</h2></body></html>");
+        w.set_html("<html><body><h2>🚨 Khong tim thay index.html!</h2></body></html>");
     }
 
     w.run();

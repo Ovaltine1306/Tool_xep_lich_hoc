@@ -1,3 +1,0 @@
-D:/Tool_xep_lich_hoc/build/CMakeFiles/toolXepLichHoc.dir
-D:/Tool_xep_lich_hoc/build/CMakeFiles/edit_cache.dir
-D:/Tool_xep_lich_hoc/build/CMakeFiles/rebuild_cache.dir

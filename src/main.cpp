@@ -92,7 +92,7 @@ std::vector<std::string> bopTachMaMon(const std::string& cleanCodes) {
 int main() {
   std::cout << "=======================================================================" << std::endl;
   std::cout << "    [!] HUST SCHEDULE ENGINE v2.5 - SOFT RETRO CALENDAR EDITION        " << std::endl;
-  std::cout << "    [+] CORE ALGORITHM : BACKTRACKING (QUAY LUI DEG QUY)               " << std::endl;
+  std::cout << "    [+] CORE ALGORITHM : BACKTRACKING (QUAY LUI DE QUY)                " << std::endl;
   std::cout << "    [+] DEVELOPED BY   : UONG VAN THINH & NGUYEN MINH TRI (IT1 - HUST) " << std::endl;
   std::cout << "    [+] VERSION        : 2026.06.07                                    " << std::endl;
   std::cout << "    [-] WARNING        : ALL RIGHTS RESERVED. DO NOT RE-BRAND!         " << std::endl;
@@ -103,6 +103,15 @@ int main() {
     webview::webview w(true, nullptr);
     w.set_title("HUST Schedule Engine");
     w.set_size(1200, 800, WEBVIEW_HINT_NONE);
+    
+    #if defined(_WIN32)
+    HWND hwnd = (HWND)w.window().value(); // Chọc thẳng vào handle cửa sổ của Windows
+    HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(1)); // Bốc quả icon ID = 1 trong file .rc ra
+    if (hIcon) {
+        SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon); // Ép đổi icon góc Title Bar
+        SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);   // Ép đổi icon dưới thanh Taskbar
+    }
+    #endif
 
     w.bind("taoTKB", [&](const std::string &req) -> std::string {
         // 🔥 LOG 1: Xem chính xác cục dữ liệu thô thằng Frontend ném sang là gì

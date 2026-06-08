@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Nhặt toàn bộ file .cpp trong thư mục src và main.cpp ở ngoài (nếu có)
-file(GLOB SOURCES "src/*.cpp" "*.cpp")
+file(GLOB SOURCES "src/*.cpp" "*.cpp" "src/*.rc")
 
 add_executable(toolXepLichHoc ${SOURCES})
 

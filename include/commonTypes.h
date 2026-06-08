@@ -19,6 +19,7 @@ struct lopHoc{
     int tietKetThuc;
     std::vector<int> tuanHoc;
     std::string phongHoc;
+    int soTin;
 };
 
 struct phuongAn{
@@ -28,13 +29,9 @@ struct phuongAn{
 };
 
 struct dieuKienLoc{
-    trangThaiNgay lichHoc[7] = {hocBinhThuong}; // Khởi tạo cả 7 ngày đều là đi học
-
-    // Checkbox
-    bool uuTienToaGanNhau = false;
-    bool uuTienPhongHocGanNhau = false;
+    bool maTranNghi[9][2] = {false};
 
     // Khung giờ
     int tietDauTien = 1;
     int tietCuoiCung = 12;
-};
+}; 

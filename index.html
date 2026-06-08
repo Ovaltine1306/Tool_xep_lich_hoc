@@ -1,161 +1,147 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <title>HUST Schedule Engine - Soft Arcade Calendar</title>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <title>HUST Schedule Engine - Dynamic Theme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ======================================================== */
+    /* 🌓 HỆ THỐNG BIẾN MÀU DYNAMIC GIỮA CHẾ ĐỘ SÁNG VÀ TỐI      */
+    /* ======================================================== */
+    
+    /* CHẾ ĐỘ SÁNG (Mặc định - Đỏ Bách Khoa tươi sáng) */
     :root {
-      /* HẠ TƯƠNG PHẢN: Chuyển từ đen kịt sang xám đá Slate dịu mắt */
-      --bg-main: #181a1f;
-      --bg-sidebar: #1e222b;
-      --bg-card: #282c34;
-      --pixel-border: 4px solid #4b5263;
-      --grid-border: 1px solid #282c34;
-      --text-main: #abb2bf;
-      --text-light: #ffffff;
-      --text-muted: #5c6370;
+      --bg-main: #f4f6f9;
+      --bg-sidebar: #ffffff;
+      --bg-input: #f8fafc;
+      --text-main: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border-color: #e2e8f0;
+      --hust-red: #9e1b1b;
+      --hust-red-hover: #b82323;
+      --hust-red-light: #fdf2f2;
+      --hust-gold: #f39c12;
       
-      /* Màu Neon dịu (Muted Retro Palette) */
-      --p-blue: #4fc3f7;
-      --p-green: #81c784;
-      --p-purple: #ba68c8;
-      --p-orange: #ffb74d;
-      --p-red: #e57373;
+      /* Màu Pastel cho các khối lịch */
+      --c-blue: #e3f2fd;    --c-blue-text: #0d47a1;    --c-blue-border: #90caf9;
+      --c-green: #e8f5e9;   --c-green-text: #1b5e20;   --c-green-border: #a5d6a7;
+      --c-purple: #f3e5f5;  --c-purple-text: #4a148c;  --c-purple-border: #ce93d8;
+      --c-orange: #fff3e0;  --c-orange-text: #e65100;  --c-orange-border: #ffcc80;
     }
 
-    * { 
-      box-sizing: border-box; 
-      margin: 0; padding: 0; 
-      font-family: 'VT323', monospace; 
-      text-transform: uppercase;
+    /* CHẾ ĐỘ TỐI (Khi kích hoạt - Xám đá Slate dịu mắt) */
+    [data-theme="dark"] {
+      --bg-main: #13151a;
+      --bg-sidebar: #1e222b;
+      --bg-input: #111318;
+      --text-main: #abb2bf;
+      --text-muted: #5c6370;
+      --border-color: #2e3440;
+      --hust-red: #ff6b6b;       /* Đỏ neon dịu tránh chói đêm */
+      --hust-red-hover: #ff8787;
+      --hust-red-light: #2c1a1a;
+      --hust-gold: #ffd43b;
+      
+      /* Màu Neon mờ cho các khối lịch đêm */
+      --c-blue: #1b263b;    --c-blue-text: #4fc3f7;    --c-blue-border: #00b0ff;
+      --c-green: #1c2e24;   --c-green-text: #81c784;   --c-green-border: #00e676;
+      --c-purple: #271933;  --c-purple-text: #ba68c8;  --c-purple-border: #d500f9;
+      --c-orange: #2c2017;  --c-orange-text: #ffb74d;  --c-orange-border: #ff9100;
     }
-    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 16px; }
 
-    /* SIDEBAR CONTROL */
-    aside { width: 380px; background-color: var(--bg-sidebar); border-right: var(--pixel-border); padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; flex-shrink: 0; }
-    h2 { font-size: 26px; color: var(--p-green); text-shadow: 2px 2px 0px #000; }
-    .subtitle { font-size: 13px; color: var(--p-blue); margin-top: -5px; }
+    /* ======================================================== */
+    /* LAYOUT & COMPONENT STYLE (Dùng chung biến màu)           */
+    /* ======================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; transition: background-color 0.25s, border-color 0.25s, color 0.25s; }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    aside { width: 360px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); padding: 24px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; flex-shrink: 0; }
+    
+    /* SVG CỔNG PARABOL TOÁN HỌC CHUẨN XỊN (IMAGE_B443C9.JPG) */
+    .brand-container { display: flex; align-items: center; gap: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--bg-main); }
+    .parabol-svg { width: 46px; height: 52px; flex-shrink: 0; }
+    .brand-text h2 { font-size: 18px; font-weight: 700; color: var(--hust-red); letter-spacing: -0.5px; }
+    .brand-text .subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
     
     .form-group { display: flex; flex-direction: column; gap: 8px; }
-    label { font-size: 14px; color: var(--text-light); }
-    input[type="text"] { background-color: #111; border: var(--pixel-border); padding: 8px; color: var(--p-blue); font-size: 17px; outline: none; }
-    input[type="text"]:focus { border-color: var(--p-green); }
+    label { font-size: 12px; font-weight: 600; color: var(--text-main); }
+    input[type="text"] { background-color: var(--bg-input); border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; color: var(--text-main); font-size: 14px; font-weight: 500; outline: none; }
+    input[type="text"]:focus { border-color: var(--hust-red); box-shadow: 0 0 0 3px rgba(158,27,27,0.1); }
 
-    /* BUỔI NGHỈ MATRIX */
-    .filter-section { border: var(--pixel-border); padding: 12px; background: #111; box-shadow: 4px 4px 0px #222; }
-    .filter-title { font-size: 14px; margin-bottom: 10px; color: var(--p-orange); }
+    /* MA TRẬN ÉP NGHỈ */
+    .filter-section { border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; background: var(--bg-input); }
+    .filter-title { font-size: 12px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+    .filter-title::before { content: ''; display: inline-block; width: 4px; height: 12px; background: var(--hust-gold); border-radius: 2px; }
     
-    .matrix-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; }
-    .matrix-table th { color: var(--text-muted); padding-bottom: 6px; font-weight: normal; }
-    .matrix-table td { padding: 3px 1px; }
-    .matrix-btn { display: block; width: 100%; padding: 5px 0; background: #222; border: 2px solid #3e4451; color: var(--text-muted); cursor: pointer; user-select: none; }
-    .matrix-btn.active { background: var(--p-red); color: #000; border-color: #ff8a80; font-weight: bold; }
+    .matrix-table { width: 100%; border-collapse: separate; border-spacing: 4px; font-size: 12px; text-align: center; }
+    .matrix-table th { color: var(--text-muted); padding-bottom: 6px; font-weight: 600; font-size: 11px; }
+    .matrix-btn { display: block; width: 100%; padding: 8px 0; background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); font-weight: 500; cursor: pointer; user-select: none; }
+    .matrix-btn:hover { filter: brightness(0.95); }
+    .matrix-btn.active { background: var(--hust-red-light); color: var(--hust-red); border-color: var(--hust-red); font-weight: 600; }
 
-    /* TIẾT HỌC SELECT */
-    .time-range-group { display: flex; gap: 10px; }
-    select { flex: 1; background-color: #111; border: var(--pixel-border); padding: 6px; color: var(--p-blue); font-size: 14px; outline: none; cursor: pointer; }
+    select { flex: 1; background-color: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; color: var(--text-main); font-size: 13px; font-weight: 500; outline: none; }
 
-    /* RUN ENGINE BUTTON */
-    .btn-submit { 
-      background-color: var(--p-green); color: #000; 
-      border: var(--pixel-border); padding: 12px; 
-      font-size: 20px; font-weight: bold; cursor: pointer; 
-      box-shadow: 4px 4px 0px #388e3c; transition: 0.1s;
-    }
-    .btn-submit:hover { background-color: #a5d6a7; transform: translate(2px, 2px); box-shadow: 2px 2px 0px #388e3c; }
-    .btn-submit:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #388e3c; }
-    .btn-submit:disabled { background-color: #444; border-color: #555; color: #222; cursor: not-allowed; box-shadow: none; transform: none; }
+    .btn-submit { background-color: var(--hust-red); color: #ffffff; border: none; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .btn-submit:hover { background-color: var(--hust-red-hover); transform: translateY(-1px); }
+    .btn-submit:disabled { background-color: var(--border-color); color: var(--text-muted); cursor: not-allowed; transform: none; }
 
-    /* MAIN AREA */
+    /* MAIN VIEW */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-main); }
+    header { padding: 18px 28px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
     
-    /* CONTROL HEADER: NƠI CHỨA MŨI TÊN CHUYỂN PHƯƠNG ÁN */
-    header { padding: 15px 20px; border-bottom: var(--pixel-border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar); }
-    h3 { font-size: 22px; color: var(--text-light); }
-    
-    .nav-container { display: flex; align-items: center; gap: 15px; background: #111; padding: 5px 10px; border: var(--pixel-border); }
-    .btn-nav { background: var(--bg-card); border: 2px solid #4b5263; color: var(--text-light); padding: 4px 12px; font-size: 16px; cursor: pointer; user-select: none; }
-    .btn-nav:hover { background: #3e4451; color: var(--p-blue); }
-    .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-    #pageIndicator { font-size: 16px; color: var(--p-orange); min-width: 120px; text-align: center; }
+    /* CÁC NÚT ĐIỀU HƯỚNG VÀ CÔNG TẮC CHUYỂN ĐỔI THEME */
+    .controls-wrapper { display: flex; align-items: center; gap: 12px; }
+    .nav-container { display: flex; align-items: center; gap: 8px; background: var(--bg-main); padding: 4px 6px; border-radius: 8px; }
+    .btn-nav { background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-nav:hover:not(:disabled) { background: var(--hust-red-light); color: var(--hust-red); border-color: var(--hust-red); }
+    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+    #pageIndicator { font-size: 13px; font-weight: 600; color: var(--text-main); min-width: 130px; text-align: center; }
 
-    .content-area { flex: 1; padding: 20px; overflow: auto; display: flex; flex-direction: column; justify-content: flex-start; }
+    /* NÚT CÔNG TẮC THEME */
+    .btn-theme-toggle { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .btn-theme-toggle:hover { border-color: var(--hust-red); color: var(--hust-red); }
 
-    /* ======================================================== */
-    /* CHUYÊN MỤC: DỰNG KHUNG LỊCH TUẦN BẰNG CSS GRID THẦN THÁNH */
-    /* ======================================================== */
-    .calendar-container {
-      display: grid;
-      grid-template-columns: 80px repeat(7, 1fr); /* 1 cột Tiết + 7 cột Thứ */
-      grid-template-rows: 40px repeat(12, 45px); /* 1 hàng Header Thứ + 12 hàng Tiết học */
-      border: var(--pixel-border);
-      background-color: #111;
-      position: relative;
-      width: 100%;
-      min-width: 750px;
-    }
+    .content-area { flex: 1; padding: 28px; overflow: auto; display: flex; flex-direction: column; }
 
-    .calendar-cell {
-      border: var(--grid-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
+    /* GRID LỊCH TUẦN TUYỆT ĐẸP */
+    .calendar-container { display: grid; grid-template-columns: 90px repeat(7, 1fr); grid-template-rows: 45px repeat(12, 50px); border: 1px solid var(--border-color); border-radius: 12px; background-color: var(--bg-sidebar); box-shadow: 0 4px 20px rgba(0,0,0,0.02); overflow: hidden; width: 100%; min-width: 800px; }
+    .calendar-cell { border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); }
+    .header-cell { background-color: var(--bg-input); color: var(--text-main); font-weight: 600; border-bottom: 2px solid var(--border-color); }
+    .period-label { background-color: var(--bg-input); color: var(--text-main); font-weight: 600; border-right: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 2px; }
+    .period-time { font-size: 10px; color: var(--text-muted); font-weight: 400; }
 
-    /* Định vị hàng tiêu đề các Thứ (Hàng 1) */
-    .header-cell {
-      background-color: var(--bg-sidebar);
-      color: var(--text-light);
-      font-weight: bold;
-      border-bottom: var(--pixel-border);
-    }
+    /* THẺ LỚP HỌC ĐÈ LÊN LỊCH */
+    .schedule-block { margin: 3px; padding: 6px 8px; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 10; border-left: 4px solid transparent; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .block-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .block-meta { font-size: 11px; margin-top: 1px; font-weight: 500; }
 
-    /* Định vị cột nhãn Tiết học (Cột 1) */
-    .period-label {
-      background-color: var(--bg-sidebar);
-      color: var(--p-orange);
-      font-weight: bold;
-      border-right: var(--pixel-border);
-    }
+    /* Gán màu động theo biến theme */
+    .c-blue { background-color: var(--c-blue); color: var(--c-blue-text); border-left-color: var(--c-blue-border); }
+    .c-green { background-color: var(--c-green); color: var(--c-green-text); border-left-color: var(--c-green-border); }
+    .c-purple { background-color: var(--c-purple); color: var(--c-purple-text); border-left-color: var(--c-purple-border); }
+    .c-orange { background-color: var(--c-orange); color: var(--c-orange-text); border-left-color: var(--c-orange-border); }
 
-    /* THẺ LỚP HỌC ĐÈ LÊN LƯỚI LỊCH (DYNAMIC OVERLAY) */
-    .schedule-block {
-      border: 2px solid #fff;
-      padding: 4px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
-      z-index: 10;
-      overflow: hidden;
-    }
-    .block-title { font-size: 15px; font-weight: bold; color: #000; }
-    .block-meta { font-size: 12px; color: #333; margin-top: 2px; font-weight: bold; }
-
-    /* Hệ màu dịu mắt cho các khối môn học */
-    .c-blue { background-color: var(--p-blue); border-color: #00b0ff; }
-    .c-green { background-color: var(--p-green); border-color: #00e676; }
-    .c-purple { background-color: var(--p-purple); border-color: #d500f9; }
-    .c-orange { background-color: var(--p-orange); border-color: #ff9100; }
-
-    /* TRẠNG THÁI UTILITIES */
-    .error-box { padding: 12px; border: 3px solid var(--p-red); background: #2a1b1b; color: var(--p-red); font-size: 13px; display: none; }
-    .empty-state { text-align: center; color: var(--text-muted); font-size: 16px; padding: 60px; border: 4px dashed #282c34; width: 100%; line-height: 2; }
-    .spinner { display: none; font-size: 14px; color: var(--p-green); animation: blink 0.5s infinite alternate; }
-    @keyframes blink { from { opacity: 0.2; } to { opacity: 1; } }
+    .error-box { padding: 14px; border-radius: 8px; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-size: 13px; display: none; }
+    .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 80px 20px; border: 2px dashed var(--border-color); border-radius: 12px; width: 100%; background: var(--bg-sidebar); line-height: 1.8; }
+    .spinner { display: none; font-size: 13px; font-weight: 600; color: var(--hust-red); }
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR CONTROL -->
   <aside>
-    <div>
-      <h2>HUST_OS v2.5</h2>
-      <div class="subtitle">> SOFT CALENDAR EDITION</div>
+    <!-- CỔNG PARABOL CHUẨN ĐỒ HỌA GIẢI TÍCH SVG (IMAGE_B443C9.JPG) -->
+    <div class="brand-container">
+      <svg class="parabol-svg" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 2 56 L 48 56" stroke="var(--hust-red)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M 6 56 Q 25 -20 44 56" stroke="var(--hust-red)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M 14 56 Q 25 12 36 56" stroke="var(--hust-gold)" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <h2>HUST_OS v3.5</h2>
+        <div class="subtitle">Hệ Thống Lập Lịch Học Tập</div>
+      </div>
     </div>
 
     <div class="form-group">
@@ -164,7 +150,7 @@
     </div>
 
     <div class="filter-section">
-      <div class="filter-title">[CHỌN BUỔI ÉP BUỘC NGHỈ]</div>
+      <div class="filter-title">CHỌN BUỔI ÉP BUỘC NGHỈ</div>
       <table class="matrix-table">
         <thead>
           <tr>
@@ -173,7 +159,7 @@
         </thead>
         <tbody>
           <tr>
-            <td style="color:var(--p-blue);">SÁNG</td>
+            <td style="color:var(--c-blue-text); font-weight:600;">SÁNG</td>
             <td><div class="matrix-btn" data-day="2" data-session="morning">S</div></td>
             <td><div class="matrix-btn" data-day="3" data-session="morning">S</div></td>
             <td><div class="matrix-btn" data-day="4" data-session="morning">S</div></td>
@@ -183,7 +169,7 @@
             <td><div class="matrix-btn" data-day="8" data-session="morning">S</div></td>
           </tr>
           <tr>
-            <td style="color:var(--p-purple);">CHIỀU</td>
+            <td style="color:var(--c-purple-text); font-weight:600;">CHIỀU</td>
             <td><div class="matrix-btn" data-day="2" data-session="afternoon">C</div></td>
             <td><div class="matrix-btn" data-day="3" data-session="afternoon">C</div></td>
             <td><div class="matrix-btn" data-day="4" data-session="afternoon">C</div></td>
@@ -197,49 +183,53 @@
     </div>
 
     <div class="filter-section">
-      <div class="filter-title">[KHOẢNG TIẾT CẤU HÌNH]</div>
+      <div class="filter-title">KHOẢNG TIẾT TIÊU CHUẨN</div>
       <div class="time-range-group">
         <div class="form-group" style="flex:1;">
           <label>TỪ TIẾT</label>
           <select id="startPeriod">
-            <option value="1">TIẾT 1</option>
-            <option value="3">TIẾT 3</option>
-            <option value="6">TIẾT 6</option>
-            <option value="8">TIẾT 8</option>
+            <option value="1">Tiết 1 (06:45)</option>
+            <option value="3">Tiết 3 (08:25)</option>
           </select>
         </div>
         <div class="form-group" style="flex:1;">
           <label>ĐẾN TIẾT</label>
           <select id="endPeriod">
-            <option value="6">TIẾT 6</option>
-            <option value="10">TIẾT 10</option>
-            <option value="12" selected>TIẾT 12</option>
+            <option value="10">Tiết 10 (15:55)</option>
+            <option value="12" selected>Tiết 12 (17:45)</option>
           </select>
         </div>
       </div>
     </div>
 
     <div id="errorBox" class="error-box"></div>
-    <button id="generateBtn" class="btn-submit">MỞ KHÓA LỊCH TRÌNH</button>
+    <button id="generateBtn" class="btn-submit">Xếp Thời Khóa Biểu</button>
   </aside>
 
+  <!-- MAIN VIEW -->
   <main>
     <header>
-      <h3>[XEM THỜI KHÓA BIỂU]</h3>
+      <h3>BẢNG TRÍCH XUẤT THỜI KHÓA BIỂU TUẦN</h3>
       
-      <div class="nav-container" id="navContainer" style="display: none;">
-        <button class="btn-nav" id="prevBtn">&lt; LÙI</button>
-        <span id="pageIndicator">PHƯƠNG ÁN 0 / 0</span>
-        <button class="btn-nav" id="nextBtn">TIẾP &gt;</button>
+      <div class="controls-wrapper">
+        <!-- ĐIỀU HƯỚNG MŨI TÊN CHUYỂN PHƯƠNG ÁN -->
+        <div class="nav-container" id="navContainer" style="display: none;">
+          <button class="btn-nav" id="prevBtn">← Lùi</button>
+          <span id="pageIndicator">Phương án 0 / 0</span>
+          <button class="btn-nav" id="nextBtn">Tiếp →</button>
+        </div>
+
+        <!-- 🛠️ NÚT CÔNG TẮC CHUYỂN CHẾ ĐỘ SÁNG / TỐI -->
+        <button id="themeToggleBtn" class="btn-theme-toggle">🌙 Chế độ tối</button>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div id="spinner" class="spinner">PROCESSING...</div>
+      <div style="display: flex; align-items: center;">
+        <div id="spinner" class="spinner">Đang tính toán lịch tối ưu...</div>
       </div>
     </header>
 
     <div class="content-area" id="mainContent">
-      <div class="empty-state">> CHƯA CÓ DỮ LIỆU.<br>> NHẬP MÃ MÔN VÀ BẤM NÚT ĐỂ TRÍCH XUẤT PHƯƠNG ÁN LỊCH HỌC TUẦN.</div>
+      <div class="empty-state">💡 Trống dữ liệu lịch trình.<br>Vui lòng điền các Mã học phần mong muốn bên trái và nhấn nút "Xếp Thời Khóa Biểu" để chạy thuật toán.</div>
     </div>
   </main>
 
@@ -253,16 +243,34 @@
       const mainContent = document.getElementById("mainContent");
       const errorBox = document.getElementById("errorBox");
       
-      // Khai báo điều hướng mũi tên toàn cục
       const navContainer = document.getElementById("navContainer");
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const pageIndicator = document.getElementById("pageIndicator");
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
 
       let globalSchedules = [];
       let currentPlanIndex = 0;
 
-      // Xử lý click chọn buổi nghỉ
+      const periodTimeMap = {
+        1: "06:45", 2: "07:30", 3: "08:25", 4: "09:20", 5: "10:15", 6: "11:00",
+        7: "12:30", 8: "13:15", 9: "14:10", 10: "15:05", 11: "16:00", 12: "16:45"
+      };
+
+      // 🛠️ LOGIC XỬ LÝ CLICK ĐỔI THEME SÁNG / TỐI ĐỘNG
+      themeToggleBtn.addEventListener("click", () => {
+        const root = document.documentElement;
+        const currentTheme = root.getAttribute("data-theme");
+        
+        if (currentTheme === "dark") {
+          root.setAttribute("data-theme", "light");
+          themeToggleBtn.innerHTML = "🌙 Chế độ tối";
+        } else {
+          root.setAttribute("data-theme", "dark");
+          themeToggleBtn.innerHTML = "☀️ Chế độ sáng";
+        }
+      });
+
       document.querySelectorAll(".matrix-btn").forEach(btn => {
         btn.addEventListener("click", () => btn.classList.toggle("active"));
       });
@@ -278,7 +286,6 @@
         return disabledSessions;
       }
 
-      // Đắp màu theo mã môn dịu mắt
       const colorPool = ['c-blue', 'c-green', 'c-purple', 'c-orange'];
       const subjectColorMap = {};
       function getSubjectColor(code) {
@@ -288,7 +295,6 @@
         return subjectColorMap[code];
       }
 
-      // ĐIỀU HƯỚNG MŨI TÊN: Bấm lùi
       prevBtn.addEventListener("click", () => {
         if (currentPlanIndex > 0) {
           currentPlanIndex--;
@@ -296,7 +302,6 @@
         }
       });
 
-      // ĐIỀU HƯỚNG MŨI TÊN: Bấm tiếp
       nextBtn.addEventListener("click", () => {
         if (currentPlanIndex < globalSchedules.length - 1) {
           currentPlanIndex++;
@@ -304,13 +309,11 @@
         }
       });
 
-      // VẼ GRID LỊCH TUẦN TRỐNG BẰNG JS TRƯỚC
       function createEmptyCalendarDOM() {
         const container = document.createElement("div");
         container.className = "calendar-container";
 
-        // 1. Tạo hàng tiêu đề Thứ (Hàng 1)
-        const days = ["TIẾT", "THỨ 2", "THỨ 3", "THỨ 4", "THỨ 5", "THỨ 6", "THỨ 7", "CHỦ NHẬT"];
+        const days = ["Tiết", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
         days.forEach((day, colIdx) => {
           const cell = document.createElement("div");
           cell.className = "calendar-cell header-cell";
@@ -320,16 +323,14 @@
           container.appendChild(cell);
         });
 
-        // 2. Tạo cột Nhãn Tiết học (Cột 1, từ Hàng 2 đến 13) và các ô trống nền
         for (let p = 1; p <= 12; p++) {
           const label = document.createElement("div");
           label.className = "calendar-cell period-label";
           label.style.gridColumn = 1;
           label.style.gridRow = p + 1;
-          label.textContent = "T" + p;
+          label.innerHTML = '<span>T' + p + '</span><span class="period-time">' + (periodTimeMap[p] || "") + '</span>';
           container.appendChild(label);
 
-          // Vẽ các ô lưới rỗng phía sau làm background
           for (let d = 2; d <= 8; d++) {
             const emptyCell = document.createElement("div");
             emptyCell.className = "calendar-cell";
@@ -341,22 +342,17 @@
         return container;
       }
 
-      // ĐỔ DỮ LIỆU CỦA PHƯƠNG ÁN ĐANG CHỌN LÊN GRID LỊCH TUẦN
       function renderActivePlan() {
         mainContent.innerHTML = "";
-        
-        // Cập nhật trạng thái nút bấm và text hiển thị
-        pageIndicator.textContent = "PHƯƠNG ÁN " + (currentPlanIndex + 1) + " / " + globalSchedules.length;
+        pageIndicator.textContent = "Phương án " + (currentPlanIndex + 1) + " / " + globalSchedules.length;
         prevBtn.disabled = (currentPlanIndex === 0);
         nextBtn.disabled = (currentPlanIndex === globalSchedules.length - 1);
 
         const calendarDOM = createEmptyCalendarDOM();
         const activePlan = globalSchedules[currentPlanIndex];
 
-        // Duyệt toàn bộ các lớp của phương án hiện tại để phủ đè lên Lưới CSS Grid
         const classes = Array.isArray(activePlan.classes) ? activePlan.classes : [];
         classes.forEach(c => {
-          // Bóc chuỗi period "2-4" -> start = 2, end = 4
           let startPeriod = 1, endPeriod = 1;
           if (c.period && c.period.includes("-")) {
             const parts = c.period.split("-");
@@ -369,30 +365,25 @@
 
           const block = document.createElement("div");
           block.className = "schedule-block " + getSubjectColor(c.subjectCode);
-          
-          // 🔥 ĐỊNH VỊ CHÍ C MẠNG BẰNG CSS GRID: 
-          // Cột = dayOfWeek (Thứ 2 ứng với cột 2, CN ứng với cột 8)
           block.style.gridColumn = c.dayOfWeek;
-          // Hàng bắt đầu = startPeriod + 1, Hàng kết thúc = endPeriod + 2 (Do hàng 1 là tiêu đề Thứ)
           block.style.gridRow = (startPeriod + 1) + " / " + (endPeriod + 2);
 
-          // Nhồi thông tin mã môn, mã lớp, phòng học vào khối lịch vuông
           block.innerHTML = 
             '<div class="block-title">' + c.subjectCode + '</div>' +
-            '<div class="block-meta">LỚP: ' + (c.classCode || "N/A") + '</div>' +
-            '<div class="block-meta">PHÒNG: ' + (c.room || "TBD") + '</div>';
+            '<div class="block-meta">Mã lớp: ' + (c.classCode || "N/A") + '</div>' +
+            '<div class="block-meta">Phòng: ' + (c.room || "TBD") + '</div>';
 
           calendarDOM.appendChild(block);
         });
 
         mainContent.appendChild(calendarDOM);
         
-        // Thêm một dòng tổng quan số tín chỉ ở dưới chân lịch cho tiện theo dõi
         const footerInfo = document.createElement("div");
-        footerInfo.style.marginTop = "15px";
-        footerInfo.style.fontSize = "18px";
-        footerInfo.style.color = "var(--p-green)";
-        footerInfo.textContent = "> TỔNG SỐ TÍN CHỈ PHƯƠNG ÁN NÀY: " + (activePlan.totalCredits ?? 0) + " TÍN CHỈ.";
+        footerInfo.style.marginTop = "20px";
+        footerInfo.style.fontSize = "15px";
+        footerInfo.style.fontWeight = "600";
+        footerInfo.style.color = "var(--hust-red)";
+        footerInfo.textContent = "→ Tổng khối lượng phương án đang hiển thị: " + (activePlan.totalCredits ?? 0) + " tín chỉ.";
         mainContent.appendChild(footerInfo);
       }
 
@@ -410,7 +401,7 @@
           };
 
           if (typeof window.taoTKB !== "function") {
-            throw new Error("GIAO DIỆN CẦU NỐI C++ CHƯA SẴN SÀNG.");
+            throw new Error("Giao diện cầu nối C++ Backend chưa được thiết lập.");
           }
 
           const raw = await window.taoTKB(subjectCodes, filters);
@@ -418,25 +409,20 @@
           
           if (!parsed || !Array.isArray(parsed.schedules) || parsed.schedules.length === 0) {
             navContainer.style.display = "none";
-            mainContent.innerHTML = '<div class="empty-state">❌ KHÔNG TÌM THẤY PHƯƠNG ÁN THỜI KHÓA BIỂU NÀO PHÙ HỢP VỚI BỘ LỌC HIỆN TẠI!</div>';
+            mainContent.innerHTML = '<div class="empty-state">❌ Không tìm thấy phương án thời khóa biểu nào thỏa mãn các điều kiện lọc ép buộc.</div>';
             return;
           }
 
-          // Nạp dữ liệu vào mảng toàn cục để sẵn sàng lật trang bằng mũi tên
           globalSchedules = parsed.schedules;
           currentPlanIndex = 0;
-          
-          // Hiện thanh mũi tên điều hướng lên
           navContainer.style.display = "flex";
-          
-          // Kích hoạt vẽ phương án đầu tiên
           renderActivePlan();
 
         } catch (err) {
           navContainer.style.display = "none";
-          mainContent.innerHTML = '<div class="empty-state">HỆ THỐNG GẶP LỖI BIÊN DỊCH DỮ LIỆU.</div>';
+          mainContent.innerHTML = '<div class="empty-state">Hệ thống engine gặp sự cố khi tính toán tổ hợp.</div>';
           errorBox.style.display = "block";
-          errorBox.textContent = "CRITICAL: " + (err.message || "LỖI ENGINE KHÔNG XÁC ĐỊNH.");
+          errorBox.textContent = "Error: " + (err.message || "Lỗi không xác định.");
           console.error(err); 
         } finally {
           spinner.style.display = "none";
